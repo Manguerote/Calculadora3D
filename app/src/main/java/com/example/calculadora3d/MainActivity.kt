@@ -1,8 +1,14 @@
 package com.example.calculadora3d
 
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.ColorFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -24,13 +31,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // 1. Estado para controlar el tema (Modo Oscuro por defecto)
             var isDarkTheme by remember { mutableStateOf(true) }
 
-            // 2. Definición de colores
+            var showSplashScreen by remember { mutableStateOf(true) }
+
+            LaunchedEffect(Unit) {
+                delay(2000)
+                showSplashScreen = false
+            }
+
+            // Definición de colores
             val colors = if (isDarkTheme) {
                 darkColorScheme(
-                    primary = Color(0xFFD0BCFF), // Lila más claro para mejor contraste
+                    primary = Color(0xFFD0BCFF),
                     onPrimary = Color(0xFF381E72),
                     primaryContainer = Color(0xFF4F378B),
                     onPrimaryContainer = Color(0xFFEADDFF),
@@ -43,8 +56,8 @@ class MainActivity : ComponentActivity() {
                 lightColorScheme(
                     primary = Color(0xFF6750A4),
                     onPrimary = Color.White,
-                    primaryContainer = Color(0xFFEADDFF), // Fondo suave para los títulos
-                    onPrimaryContainer = Color(0xFF21005D), // Texto oscuro para los títulos
+                    primaryContainer = Color(0xFFEADDFF),
+                    onPrimaryContainer = Color(0xFF21005D),
                     background = Color(0xFFFFFBFE),
                     surface = Color(0xFFFFFBFE),
                     onBackground = Color(0xFF1C1B1F),
@@ -57,13 +70,90 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CalculadoraScreen(
-                        isDarkTheme = isDarkTheme,
-                        onThemeChange = { isDarkTheme = it }
-                    )
+                    Crossfade(targetState = showSplashScreen, animationSpec = tween(700), label = "Splash") { isSplash ->
+                        if (isSplash) {
+                            PantallaCarga()
+                        } else {
+                            CalculadoraScreen(
+                                isDarkTheme = isDarkTheme,
+                                onThemeChange = { isDarkTheme = it }
+                            )
+                        }
+                    }
                 }
             }
         }
+    }
+}
+
+// --- PANTALLA DE CARGA ---
+@Composable
+fun PantallaCarga() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // --- 1. ICONO PRINCIPAL (Saco de dinero) ---
+        Text(
+            text = "💰",
+            fontSize = 80.sp
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // --- 2. TÍTULO DE LA APP ---
+        Text(
+            text = "Calculadora 3D",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // --- 3. TEXTO "DESARROLLADO POR" (Línea superior) ---
+        Text(
+            text = "Desarrollado por",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Light,
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // --- 4. FILA CON LOGO Y NOMBRE  ---
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            // LOGO GITHUB
+            Image(
+                painter = painterResource(id = R.drawable.github_logo),
+                contentDescription = "Logo GitHub",
+                modifier = Modifier.size(40.dp) .offset(y = (-7).dp),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // NOMBRE DE USUARIO
+            Text(
+                text = "AndyMonCode",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        // --- 5. INDICADOR DE CARGA ---
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
     }
 }
 
@@ -244,12 +334,12 @@ fun CalculadoraScreen(
     }
 }
 
-// --- COMPONENTE DE CABECERA MEJORADO ---
+// --- COMPONENTE DE CABECERA ---
 @Composable
 fun SectionHeader(title: String, icon: String) {
     Surface(
-        color = MaterialTheme.colorScheme.primaryContainer, // Color de fondo del bloque
-        shape = RoundedCornerShape(12.dp), // Bordes redondeados
+        color = MaterialTheme.colorScheme.primaryContainer,
+        shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
@@ -264,7 +354,7 @@ fun SectionHeader(title: String, icon: String) {
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer // Texto con alto contraste
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
     }
@@ -285,7 +375,7 @@ fun InputNumber(value: String, onValueChange: (String) -> Unit, label: String) {
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
         singleLine = true,
-        // Mejoramos los colores del input para que se vea más limpio
+
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             focusedLabelColor = MaterialTheme.colorScheme.primary,
