@@ -175,7 +175,7 @@ fun CalculadoraScreen(
 
             // --- BLOQUE 3: DISEÑO ---
             SectionHeader(title = "3. Mano de Obra", icon = "🛠️")
-            InputNumber(value = horasDiseno, onValueChange = { horasDiseno = it }, label = "Horas de diseño")
+            InputNumber(value = horasDiseno, onValueChange = { horasDiseno = it }, label = "Horas de diseño/Post procesado")
             InputNumber(value = precioHoraDiseno, onValueChange = { precioHoraDiseno = it }, label = "Precio por hora (€)")
 
             Spacer(modifier = Modifier.height(16.dp))
