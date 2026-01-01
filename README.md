@@ -41,4 +41,4 @@ Puedes descargar la última versión instalable (.apk) desde la sección de Rele
 
 ---
 
-Desarrollado por [Manguerote](https://github.com/Manguerote)
+Desarrollado por [Manguerote](https://github.com/AndyMonCode)
