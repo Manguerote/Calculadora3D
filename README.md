@@ -26,7 +26,7 @@ Esta herramienta desglosa el coste en cuatro bloques fundamentales:
 
 1.  Clonar el repositorio:
    
-    git clone [https://github.com/Manguerote/Calculadora3D.git](https://github.com/Manguerote/Calculadora3D.git)
+    git clone [https://github.com/AndyMonCode/Calculadora3D.git](https://github.com/AndyMonCode/Calculadora3D.git)
     
 2.  Abrir en Android Studio:
     Selecciona la carpeta Calculadora3D y espera a que Gradle sincronice las dependencias.
